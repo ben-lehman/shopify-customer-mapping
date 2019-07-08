@@ -14,4 +14,7 @@ def orders():
     order.set_order_count()
     order_count = order.count
 
-    return render_template('orders/locations.html', count=order_count)
+    order.set_order_locations()
+    order_locations = order.order_locations
+
+    return render_template('orders/locations.html', count=order_count, locations=order_locations)
