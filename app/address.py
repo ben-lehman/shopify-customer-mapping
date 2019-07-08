@@ -17,4 +17,9 @@ def orders():
     order.set_order_locations()
     order_locations = order.order_locations
 
-    return render_template('orders/locations.html', count=order_count, locations=order_locations)
+    order_coords = order.get_coordinates()
+
+    return render_template('orders/locations.html',
+                           count=order_count,
+                           locations=order_locations,
+                           coords=order_coords)

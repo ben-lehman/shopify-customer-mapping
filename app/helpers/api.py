@@ -43,14 +43,23 @@ class Orders:
         for address in all_locations:
             try:
                 shipping_address = address['shipping_address']
-                lon = shipping_address.get('longitude')
-                lat = shipping_address.get('latitude')
-                current_cords = {'longitude': lon, 'latitude': lat}
-
-                if current_cords not in self.order_locations:
-                    self.order_locations.append(current_cords)
+                self.order_locations.append(shipping_address)
             except:
                 print("There wasn't any shipping address associated with this order")
 
         return
+
+    def get_coordinates(self):
+        all_coords = []
+
+        for location in self.order_locations:
+            lon = location['longitude']
+            lat = location['latitude']
+
+            current_coords = {'longitude': lon, 'latitude': lat}
+            if current_coords not in all_coords:
+                all_coords.append(current_coords)
+
+        return all_coords
+
 
