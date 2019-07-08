@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Order Locations{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <h2>Locations:</h2>
+  <p>Location count: {{ count }}
+  {% for loc in locations %}
+  <p>{loc.zipcode}</p>
+  {% endfor %}
+{% endblock %}

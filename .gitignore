@@ -1,6 +1,9 @@
 *.py[cod]
 *.cfg
 
+# Config Files
+config.py
+
 # C extensions
 *.so
 

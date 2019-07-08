@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Welcome{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <a href="{{url_for('address.orders') }}">Get Order Locations</a>
+{% endblock %}
