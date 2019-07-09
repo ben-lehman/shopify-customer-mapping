@@ -1,5 +1,7 @@
 from flask import Flask
-from flask_googlemaps import GoogleMaps
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from config import Config
 
 import os
 
@@ -12,9 +14,13 @@ def create_app(test_config=None):
     else:
         app.config.from_mapping(test_config)
 
-    @app.route("/hello")
-    def hello():
-        return 'Hello World!'
+    app.config['SQLALCHEMY_DATABASE_URI'] = Config.SQLALCHEMY_DATABASE_URI
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = Config.SQLALCHEMY_TRACK_MODIFICATIONS
+    from app.models import db
+    db.init_app(app)
+    migrate = Migrate()
+    migrate.init_app(app, db)
+
 
     from . import home
     app.register_blueprint(home.bp)
