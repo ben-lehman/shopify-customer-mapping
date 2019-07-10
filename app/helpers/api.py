@@ -13,6 +13,12 @@ def get_response(shop, endpoint, params=''):
 
     return response
 
+def post_script(shop, endpoint, file, params='':
+    if params == '':
+        response = requests.get("%s%s" % (shop, endpoint))
+    else:
+        response = requests.get("%s%s&%s" % (shop, endpoint, params))
+
 
 class Orders:
     shop = Config.SHOPIFY_CONFIG['HOST']

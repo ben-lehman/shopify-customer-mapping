@@ -23,4 +23,6 @@ def orders():
 
 @bp.route('/map', methods=('GET',))
 def map():
-  return render_template('orders/locations.html')
+
+
+    return render_template('orders/locations.html')
