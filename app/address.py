@@ -1,5 +1,5 @@
 from flask import (
-  Blueprint, flash, g, redirect, render_template, request, url_for
+  Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
 
 from app.helpers.api import Orders
@@ -8,7 +8,7 @@ import requests
 
 bp = Blueprint('address', __name__)
 
-@bp.route('/orders', methods=('GET',))
+@bp.route('/api/orders', methods=('GET',))
 def orders():
     order = Orders()
     order.set_order_count()
@@ -19,7 +19,8 @@ def orders():
 
     order_coords = order.get_coordinates()
 
-    return render_template('orders/locations.html',
-                           count=order_count,
-                           locations=order_locations,
-                           coords=order_coords)
+    return jsonify(order_locations)
+
+@bp.route('/map', methods=('GET',))
+def map():
+  return render_template('orders/locations.html')
