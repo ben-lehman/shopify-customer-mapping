@@ -1,5 +1,6 @@
 import logging
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
@@ -9,8 +10,11 @@ import os
 def create_app(config_class=Config):
     # create and configure app
     app = Flask(__name__, instance_relative_config=True)
+    cors = CORS(app, resources={r"/api/*": {"origins": "shop.thewonderjam.com"}})
 
     app.config.from_object(config_class)
+
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
     if app.config['LOG_TO_STDOUT']:
         stream_handler = logging.StreamHandler()

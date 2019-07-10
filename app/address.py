@@ -1,7 +1,7 @@
 from flask import (
   Blueprint, flash, g, redirect, render_template, request, url_for, jsonify
 )
-
+from flask_cors import cross_origin
 from app.helpers.api import Orders
 
 import requests
@@ -9,6 +9,7 @@ import requests
 bp = Blueprint('address', __name__)
 
 @bp.route('/api/orders', methods=('GET',))
+@cross_origin()
 def orders():
     order = Orders()
     order.set_order_count()
