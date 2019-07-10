@@ -2,7 +2,7 @@
 *.cfg
 
 # Config Files
-config.py
+.env
 
 # C extensions
 *.so
