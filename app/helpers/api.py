@@ -13,7 +13,7 @@ def get_response(shop, endpoint, params=''):
 
     return response
 
-def post_script(shop, endpoint, file, params='':
+def post_script(shop, endpoint, file, params=''):
     if params == '':
         response = requests.get("%s%s" % (shop, endpoint))
     else:
