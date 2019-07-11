@@ -41,17 +41,23 @@ class Orders:
         return
 
     def set_order_locations(self):
-        location_endpoint = 'orders.json?fields=shipping_address&status=any'
+        location_endpoint = 'orders.json?limit=250&fields=shipping_address&status=any'
 
         location_response = get_response(self.shop_url, location_endpoint)
         all_locations = json.loads(location_response.content.decode('utf-8')).get('orders')
-
+        print(all_locations)
         for address in all_locations:
             try:
                 shipping_address = address['shipping_address']
                 self.order_locations.append(shipping_address)
             except:
-                print("There wasn't any shipping address associated with this order")
+                try:
+                    name = address['name']
+                    message = "No address found for %s" % name
+                    print(message)
+                except:
+                    message = "What's this? %s" % address
+                    print(message)
 
         return
 

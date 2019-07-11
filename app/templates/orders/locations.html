@@ -6,13 +6,9 @@
 
 {% block content %}
   <h2>Locations:</h2>
-  <p>Location count: {{ count }}
-  {% for loc in locations %}
-  <div>
-  <p>Name: {{loc}}</p>
-  <p>Coords: lon: {{loc['longitude']}}, lat: {{loc['latitude']}}</p>
-  </div>
-  {% endfor %}
+
+  <p>Location count: {{ count }}</p>
+  <p>{% for cust in customer %}{{cust.name}}+{% endfor %}</p>
 
   <div id="mapid"></div>
 {% endblock %}

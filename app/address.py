@@ -36,14 +36,16 @@ def update():
 @bp.route('/api/orders', methods=('GET',))
 @cross_origin()
 def orders():
-    order = Orders()
-    order.set_order_count()
-    order_count = order.count
+    customer = Customer.query.order_by(Customer.name).all()
+    # order = Orders()
+    # order.set_order_count()
+    # order_count = order.count
 
-    order.set_order_locations()
-    order_locations = order.order_locations
+    # order.set_order_locations()
+    # order_locations = order.order_locations
 
-    return jsonify(order_locations)
+    # return jsonify(order_locations)
+    return render_template('orders/locations.html', customer=customer)
 
 @bp.route('/map', methods=('GET',))
 def map():
