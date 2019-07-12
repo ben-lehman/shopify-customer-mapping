@@ -19,7 +19,7 @@ class Config(object):
   #   'port': '5432'
   # }
 
-  SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+  # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
   SQLALCHEMY_TRACK_MODIFICATIONS = False
 
   SHOPIFY_CONFIG = {
