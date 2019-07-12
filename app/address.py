@@ -3,9 +3,12 @@ from flask import (
 )
 from flask_cors import cross_origin
 from app.helpers.api import Orders
-from app.models import db
-from app.models import Customer
+# from app.models import db
+# from app.models import Customer
+from app import models
+from app import db
 
+import json
 import requests
 
 bp = Blueprint('address', __name__)
@@ -22,30 +25,35 @@ def update():
     print(type(order_locations))
 
     for location in order_locations:
-        customer = Customer(name=location['name'],
+        customer = models.Customer(name=location['name'],
                             lat=location['latitude'],
                             lng=location['longitude'],
                             address1=location['address1'])
-        db.session.add(customer)
-        db.session.commit()
+        models.db.session.add(customer)
+        models.db.session.commit()
 
     flash('Locations have been updated')
     return render_template('orders/update.html')
 
 
+@bp.route('/clear', methods=('Get',))
+def clear():
+    num_rows = models.db.session.query(Customer).delete()
+    models.db.session.commit()
+
+    return 'Deleted'
+
+
 @bp.route('/api/orders', methods=('GET',))
 @cross_origin()
 def orders():
-    customer = Customer.query.order_by(Customer.name).all()
-    # order = Orders()
-    # order.set_order_count()
-    # order_count = order.count
+    all_customers = models.Customer.query.all()
+    data = []
+    for c in all_customers:
+        data.append(c.to_dict())
 
-    # order.set_order_locations()
-    # order_locations = order.order_locations
+    return jsonify(data)
 
-    # return jsonify(order_locations)
-    return render_template('orders/locations.html', customer=customer)
 
 @bp.route('/map', methods=('GET',))
 def map():
