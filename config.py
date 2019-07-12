@@ -11,13 +11,13 @@ class Config(object):
   SHOPIFY_HOST = os.environ.get('SHOPIFY_HOST')
 
 
-  POSTGRES = {
-    'user': 'benlehman',
-    'pw': POSTGRES_PASS,
-    'db': 'mapping',
-    'host': 'localhost',
-    'port': '5432'
-  }
+  # POSTGRES = {
+  #   'user': 'benlehman',
+  #   'pw': POSTGRES_PASS,
+  #   'db': 'mapping',
+  #   'host': 'localhost',
+  #   'port': '5432'
+  # }
 
   SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
   SQLALCHEMY_TRACK_MODIFICATIONS = False
