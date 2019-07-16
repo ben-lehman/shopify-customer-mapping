@@ -15,17 +15,17 @@ bp = Blueprint('address', __name__)
 
 
 def get_or_increase_zipcode(new_zipcode):
-    customer = models.db.session.query(models.Customer).filter_by(zipcode=new_zipcode).first()
-    if not customer:
+    zipcode = models.db.session.query(models.Customer).filter_by(zipcode=new_zipcode).first()
+    if not zipcode:
         coords = get_coords_from_zipcode(new_zipcode)
         if coords:
             lat, lng = coords
-            customer = models.Customer(lat, lng, new_zipcode)
+            zipcode = models.Customer(lat, lng, new_zipcode)
         else:
             return
     else:
-        customer.count += 1
-    return customer
+        zipcode.count += 1
+    return zipcode
 
 def get_coords_from_zipcode(zipcode):
     postal_code = re.search('\d{5}(-\d{4})?$', zipcode)
