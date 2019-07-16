@@ -3,8 +3,6 @@ from flask import (
 )
 from flask_cors import cross_origin
 from app.helpers.api import Orders
-# from app.models import db
-# from app.models import Customer
 from app import models
 from app import db
 
@@ -26,9 +24,12 @@ def update():
 
     for location in order_locations:
         customer = models.Customer(name=location['name'],
-                            lat=location['latitude'],
-                            lng=location['longitude'],
-                            address1=location['address1'])
+                                   lat=location['latitude'],
+                                   lng=location['longitude'],
+                                   address1=location['address1'],
+                                   city=location['city'],
+                                   state=location['province_code']
+                            )
         models.db.session.add(customer)
         models.db.session.commit()
 
@@ -38,7 +39,7 @@ def update():
 
 @bp.route('/clear', methods=('Get',))
 def clear():
-    num_rows = models.db.session.query(Customer).delete()
+    num_rows = models.db.session.query(models.Customer).delete()
     models.db.session.commit()
 
     return 'Deleted'
