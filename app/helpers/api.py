@@ -1,6 +1,7 @@
 from flask import jsonify
 import json
 import requests
+import zipcodes
 
 from config import Config
 
@@ -45,7 +46,6 @@ class Orders:
 
         location_response = get_response(self.shop_url, location_endpoint)
         all_locations = json.loads(location_response.content.decode('utf-8')).get('orders')
-        print(all_locations)
         for address in all_locations:
             try:
                 shipping_address = address['shipping_address']

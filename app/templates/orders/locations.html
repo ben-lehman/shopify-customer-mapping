@@ -15,9 +15,6 @@
 
 {% block script %}
 <script>
-
-const ORDERS = {{orders}}
-
 function getResponse(endpoint) {
   console.log("Getting Response")
   return fetch(endpoint)
@@ -28,17 +25,20 @@ function getResponse(endpoint) {
 
 function logLocations(locations) {
   console.log("logging.");
+  // console.log(locations);
   for(var i = 0; i < locations.length; i++) {
     console.log(locations[i]['name']);
   }
 }
 
 function addMarkers(map, locations) {
+  let myIcon = new L.divIcon({className: 'my-div-icon'});
+
   for(var i = 0; i < locations.length; i++) {
-    let lng = locations[i]['longitude'];
-    let lat = locations[i]['latitude'];
+    let lng = locations[i]['lng'];
+    let lat = locations[i]['lat'];
     console.log(lng, + " ", + lat);
-    L.marker([lat, lng]).addTo(map);
+    L.marker([lat, lng], {icon: myIcon}).addTo(map);
   }
 }
 
@@ -48,30 +48,25 @@ function failureCallback(error) {
 
 
 function run() {
-    console.log(ORDERS)
-
     let accessToken = "pk.eyJ1IjoiYmVubGVobWFuIiwiYSI6ImNqeHc2YThpMjBjZXIzYnFzcjczbnRqaWoifQ.lxxzkqRpnwBXpkvbOaKrpA"
     let mymap = new L.map('mapid').setView([37.09, -95.7129], 4);
 
-    L.tileLayer(`https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=${accessToken}`, {
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
-      id: 'mapbox.streets',
-      accessToken: 'your.mapbox.access.token'
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(mymap);
 
-    let endpoint = 'http://localhost:5000/api/orders'
+    let endpoint = 'https://aunt-flow-mapping.herokuapp.com/api/orders'
 
     let loc_response = getResponse(endpoint);
     loc_response.then(addMarkers.bind(null, mymap), failureCallback);
-
 }
 
-// in case the document is already rendered
 if (document.readyState!='loading') run();
-// modern browsers
+
 else if (document.addEventListener) document.addEventListener('DOMContentLoaded', run);
-// IE <= 8
+
 else document.attachEvent('onreadystatechange', function(){
     if (document.readyState=='complete') run();
 });

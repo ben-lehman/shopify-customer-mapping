@@ -23,12 +23,9 @@ def update():
     print(type(order_locations))
 
     for location in order_locations:
-        customer = models.Customer(name=location['name'],
-                                   lat=location['latitude'],
+        customer = models.Customer(lat=location['latitude'],
                                    lng=location['longitude'],
-                                   address1=location['address1'],
-                                   city=location['city'],
-                                   state=location['province_code']
+                                   zipcode=location['zip']
                             )
         models.db.session.add(customer)
         models.db.session.commit()
