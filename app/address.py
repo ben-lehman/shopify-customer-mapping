@@ -6,10 +6,33 @@ from app.helpers.api import Orders
 from app import models
 from app import db
 
+import re
+import zipcodes
 import json
 import requests
 
 bp = Blueprint('address', __name__)
+
+
+def get_or_increase_zipcode(new_zipcode):
+    customer = models.db.session.query(models.Customer).filter_by(zipcode=new_zipcode).first()
+    if not customer:
+        coords = get_coords_from_zipcode(new_zipcode)
+        if coords:
+            lat, lng = coords
+            customer = models.Customer(lat, lng, new_zipcode)
+        else:
+            return
+    else:
+        customer.count += 1
+    return customer
+
+def get_coords_from_zipcode(zipcode):
+    postal_code = re.search('\d{5}(-\d{4})?$', zipcode)
+    if postal_code is not None:
+        cur_zip = zipcodes.matching(zipcode)
+        return (cur_zip[0]['lat'], cur_zip[0]['long'])
+    return
 
 
 @bp.route('/update', methods=('GET', 'POST'))
@@ -23,12 +46,11 @@ def update():
     print(type(order_locations))
 
     for location in order_locations:
-        customer = models.Customer(lat=location['latitude'],
-                                   lng=location['longitude'],
-                                   zipcode=location['zip']
-                            )
-        models.db.session.add(customer)
-        models.db.session.commit()
+        zcode = location['zip']
+        customer = get_or_increase_zipcode(zcode)
+        if customer is not None:
+            models.db.session.add(customer)
+            models.db.session.commit()
 
     flash('Locations have been updated')
     return render_template('orders/update.html')
