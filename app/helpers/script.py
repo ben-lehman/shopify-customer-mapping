@@ -1,4 +1,4 @@
-function getResponse(endpoint) {
+script = """function getResponse(endpoint) {
   console.log("Getting Response")
   return fetch(endpoint)
       .then(function(response) {
@@ -39,11 +39,7 @@ function run() {
       subdomains: 'abcd',
       maxZoom: 19
     }).addTo(mymap);
-
-    let endpoint = 'https://aunt-flow-mapping.herokuapp.com/api/orders'
-
-    let loc_response = getResponse(endpoint);
-    loc_response.then(addMarkers.bind(null, mymap), failureCallback);
+    addMarkers(mymap, data)
 }
 
 if (document.readyState!='loading') run();
@@ -52,4 +48,4 @@ else if (document.addEventListener) document.addEventListener('DOMContentLoaded'
 
 else document.attachEvent('onreadystatechange', function(){
     if (document.readyState=='complete') run();
-});
+});"""

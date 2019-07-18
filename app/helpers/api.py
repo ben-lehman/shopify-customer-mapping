@@ -3,6 +3,7 @@ import json
 import requests
 import zipcodes
 
+from app.gen.mymap import script
 from config import Config
 
 
@@ -14,11 +15,40 @@ def get_response(shop, endpoint, params=''):
 
     return response
 
-def post_script(shop, endpoint, data, params=''):
-    if params == '':
-        response = requests.get("%s%s" % (shop, endpoint))
-    else:
-        response = requests.get("%s%s&%s" % (shop, endpoint, params))
+
+def get_theme_id(shop):
+    theme_response = get_response(shop, "themes.json")
+    all_themes = json.loads(theme_response.content.decode('utf-8')).get('themes')
+    for theme in all_themes:
+        if theme['role'] == "main":
+            theme_id = theme['id']
+            return theme_id
+    return "No theme has the role of main"
+
+
+def put_data(shop, endpoint, put_location, data):
+    response = None
+    headers= {"Accept": "text/javascript", "Content-Type": "text/javascript"}
+    payload = {
+      "asset": {
+        "key": "assets/map.js",
+        "attachment": script
+      }
+    }
+
+    try:
+        response = requests.put("%s%s" % (shop, endpoint), data=payload, headers=headers)
+
+        if response.status_code != 200:
+            print(response.text)
+            print(response.status_code)
+            raise Exception('Recieved non 200 response.')
+        return
+    except requests.exceptions.RequestException as e:
+        if response != None:
+            print(response.text)
+        print(e)
+        raise
 
 
 class Orders:
@@ -61,6 +91,18 @@ class Orders:
 
         return
 
+    def put_data(self):
+        theme_id = get_theme_id(self.shop_url)
+        print("THEME ID =%s" % theme_id)
+        endpoint = "themes/%s/assets.json" % theme_id
+        file_location = "assets/map.js"
+        print("SCRIPTE IS: " + script)
+        put_response = put_data(self.shop_url, endpoint, file_location, script)
+        print(put_response.status_code)
+        print(put_response.headers)
+        return json.loads(put_response.decode('utf-8'))
+
+
     def get_coordinates(self):
         all_coords = []
 
@@ -73,5 +115,4 @@ class Orders:
                 all_coords.append(current_coords)
 
         return all_coords
-
 
