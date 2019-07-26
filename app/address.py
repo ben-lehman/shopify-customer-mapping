@@ -7,6 +7,7 @@ from app import models
 from app import db
 from app.helpers.script import script
 
+import click
 import re
 import zipcodes
 import json
@@ -28,6 +29,7 @@ def get_or_increase_zipcode(new_zipcode):
         zipcode.count += 1
     return zipcode
 
+
 def get_coords_from_zipcode(zipcode):
     postal_code = re.search('\d{5}(-\d{4})?$', zipcode)
     if postal_code is not None:
@@ -36,8 +38,7 @@ def get_coords_from_zipcode(zipcode):
     return
 
 
-
-@bp.route('/update', methods=('GET', 'POST'))
+@bp.route('/update', methods=('GET',))
 def update():
     order = Orders()
     order.set_order_count()
@@ -63,6 +64,27 @@ def clear():
     models.db.session.commit()
 
     return 'Deleted'
+
+@bp.cli.command('update-all')
+def update_all():
+    num_rows = models.db.session.query(models.Customer).delete()
+    models.db.session.commit()
+
+    order = Orders()
+    order.set_order_count()
+    order_count = order.count
+
+    order.set_order_locations()
+    order_locations = order.order_locations
+
+    for location in order_locations:
+        zcode = location['zip']
+        customer = get_or_increase_zipcode(zcode)
+        if customer is not None:
+            models.db.session.add(customer)
+            models.db.session.commit()
+
+    return 'Updated'
 
 
 @bp.route('/write', methods=('Get', 'PUT'))
@@ -104,8 +126,6 @@ def post():
     order.put_data()
 
     return "Success!"
-
-
 
 
 @bp.route('/api/orders', methods=('GET',))

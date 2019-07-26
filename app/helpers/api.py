@@ -13,7 +13,6 @@ def get_response(shop, endpoint, params=''):
         response = requests.get("%s%s" % (shop, endpoint))
     else:
         response = requests.get("%s%s&%s" % (shop, endpoint, params))
-
     return response
 
 
@@ -95,12 +94,19 @@ class Orders:
         return
 
     def set_order_locations(self):
-        location_endpoint = 'orders.json?limit=250&fields=shipping_address&status=any'
+        location_endpoint = 'orders.json?limit=250&status=any'
 
         location_response = get_response(self.shop_url, location_endpoint)
         all_locations = json.loads(location_response.content.decode('utf-8')).get('orders')
         for address in all_locations:
             try:
+                order_id = address['id']
+                order_id_message = "ID is %s" % order_id
+                print(order_id_message)
+                created_at_message = "Created at: %s" % address['created_at']
+                print(created_at_message)
+
+                # print("Created at: %s" % address['created_at'])
                 shipping_address = address['shipping_address']
                 self.order_locations.append(shipping_address)
             except:

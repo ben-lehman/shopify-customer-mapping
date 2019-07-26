@@ -1,6 +1,17 @@
+from app.helpers.api import Orders
+from app import models
+from app import db
+from app.helpers.script import script
+
+import click
+import re
+import zipcodes
+import json
+import requests
+
 from app import create_app, db, migrate
 from app.models import Customer
-import click
+
 
 app = create_app()
 
@@ -12,6 +23,7 @@ def make_shell_context():
 def update_loc():
     num_rows = db.session.query(Customer).delete()
     db.session.commit()
+    print("UPDATING!")
 
     order = Orders()
     order.set_order_count()
@@ -26,6 +38,3 @@ def update_loc():
         if customer is not None:
             db.session.add(customer)
             db.session.commit()
-
-if __name__ == "__main__":
-    create_app().run()
