@@ -13,7 +13,7 @@ migrate = Migrate()
 def create_app(config_class=Config):
     # create and configure app
     app = Flask(__name__, instance_relative_config=True)
-    cors = CORS(app, resources={r"/api/*": {"origins": "shop.thewonderjam.com"}})
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     app.config.from_object(config_class)
 
