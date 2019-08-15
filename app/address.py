@@ -41,8 +41,8 @@ def get_coords_from_zipcode(zipcode):
 @bp.route('/update', methods=('GET',))
 def update():
     order = Orders()
-    order.set_order_count()
-    order_count = order.count
+    # order.set_order_count()
+    # order_count = order.count
 
     order.set_order_locations()
     order_locations = order.order_locations
