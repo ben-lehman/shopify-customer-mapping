@@ -5,7 +5,6 @@ from flask_cors import cross_origin
 from app.helpers.api import Orders
 from app import models
 from app import db
-from app.helpers.script import script
 
 import click
 import re
@@ -91,45 +90,45 @@ def update_all():
     return 'Updated'
 
 
-@bp.route('/write', methods=('Get', 'PUT'))
-def write():
-    all_customers = models.Customer.query.all()
-    data = []
-    for c in all_customers:
-        data.append(c.to_dict())
+# @bp.route('/write', methods=('Get', 'PUT'))
+# def write():
+#     all_customers = models.Customer.query.all()
+#     data = []
+#     for c in all_customers:
+#         data.append(c.to_dict())
 
-    json_data = json.dumps(data)
-    js_data = "script = \"\"\"const data = " + json_data + "\n" + script + "\"\"\""
+#     json_data = json.dumps(data)
+#     js_data = "script = \"\"\"const data = " + json_data + "\n" + script + "\"\"\""
 
-    f = open("app/gen/mymap.py", "w")
-    f.write(js_data)
-    f.close
+#     f = open("app/gen/mymap.py", "w")
+#     f.write(js_data)
+#     f.close
 
-    return js_data
+    # return js_data
 
 
-@bp.route('/post', methods=('GET', 'PUT'))
-def post():
-    num_rows = models.db.session.query(models.Customer).delete()
-    models.db.session.commit()
+# @bp.route('/post', methods=('GET', 'PUT'))
+# def post():
+#     num_rows = models.db.session.query(models.Customer).delete()
+#     models.db.session.commit()
 
-    order = Orders()
-    order.set_order_count()
-    order_count = order.count
+#     order = Orders()
+#     order.set_order_count()
+#     order_count = order.count
 
-    order.set_order_locations()
-    order_locations = order.order_locations
+#     order.set_order_locations()
+#     order_locations = order.order_locations
 
-    for location in order_locations:
-        zcode = location['zip']
-        customer = get_or_increase_zipcode(zcode)
-        if customer is not None:
-            models.db.session.add(customer)
-            models.db.session.commit()
+#     for location in order_locations:
+#         zcode = location['zip']
+#         customer = get_or_increase_zipcode(zcode)
+#         if customer is not None:
+#             models.db.session.add(customer)
+#             models.db.session.commit()
 
-    order.put_data()
+#     order.put_data()
 
-    return "Success!"
+#     return "Success!"
 
 
 @bp.route('/api/orders', methods=('GET',))
