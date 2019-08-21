@@ -72,7 +72,6 @@ def put_data_curl(shop, endpoint, put_location, data):
 
     return
 
-
 class Orders:
     shop = Config.SHOPIFY_CONFIG['HOST']
     key = Config.SHOPIFY_CONFIG['API_KEY']
@@ -90,10 +89,12 @@ class Orders:
         order_count_response = get_response(self.shop_url, order_endpoint)
         order_count = json.loads(order_count_response.content.decode('utf-8')).get('count')
 
+        print("Order count is %s" %order_count)
         self.count = order_count
         return
 
     def set_order_locations(self):
+        print(self.shop_url)
         location_endpoint = 'orders.json?limit=250&status=any'
 
         location_response = get_response(self.shop_url, location_endpoint)
@@ -119,6 +120,69 @@ class Orders:
                     print(message)
 
         return
+
+    def set_all_order_locations(self):
+        order_count = self.count
+        limit = 201
+        current_order_count = 0
+        min_date = ''
+
+        location_endpoint = "orders.json?limit=%s&status=any" % limit
+        location_response = get_response(self.shop_url, location_endpoint)
+
+        if location_response.status_code == 200:
+            all_locations = json.loads(location_response.content.decode('utf-8')).get('orders')
+            count = 0
+            for address in all_locations:
+                try:
+                    # print("count: " ,count)
+                    if count == limit - 1:
+                        min_date = address['created_at']
+                        # print("Min Date is %s" % min_date)
+                    else:
+                        # order_id = address['id']
+                        # order_id_message = "ID is %s" % order_id
+                        # print(order_id_message)
+                        # created_at_message = "Created at: %s" % address['created_at']
+                        # print(created_at_message)
+
+                        count += 1
+                        shipping_address = address['shipping_address']
+                        self.order_locations.append(shipping_address)
+                except:
+                    message = "Coulde not get address info"
+                    print(message)
+            current_order_count += limit - 1
+        else:
+            print("FAILED")
+
+        # print("Order Locations after one run: ", self.order_locations)
+
+        while current_order_count < order_count:
+            location_endpoint = "orders.json?created_at_max=%s&limit=%s&status=any" % (min_date, limit)
+            location_response = get_response(self.shop_url, location_endpoint)
+
+            if location_response.status_code == 200:
+                all_locations = json.loads(location_response.content.decode('utf-8')).get('orders')
+                count = 0
+                for address in all_locations:
+                    try:
+                        if count == limit - 1:
+                            min_date = address['created_at']
+                        else:
+                            count += 1
+                            shipping_address = address['shipping_address']
+                            self.order_locations.append(shipping_address)
+                    except:
+                        message = "Coulde not get address info"
+                        print(message)
+                current_order_count += limit - 1
+                print("COC: ", current_order_count)
+            else:
+                print("FAILED: ", location_response.status_code)
+
+        return
+
 
     def put_data(self):
         theme_id = get_theme_id(self.shop_url)

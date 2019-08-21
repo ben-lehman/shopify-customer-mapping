@@ -34,17 +34,21 @@ def get_coords_from_zipcode(zipcode):
     postal_code = re.search('\d{5}(-\d{4})?$', zipcode)
     if postal_code is not None:
         cur_zip = zipcodes.matching(zipcode)
-        return (cur_zip[0]['lat'], cur_zip[0]['long'])
+        try:
+            return(cur_zip[0]['lat'], cur_zip[0]['long'])
+        except:
+            print("Error pushing zip")
     return
 
 
 @bp.route('/update', methods=('GET',))
 def update():
     order = Orders()
-    # order.set_order_count()
-    # order_count = order.count
+    order.set_order_count()
+    order_count = order.count
 
-    order.set_order_locations()
+    order.set_all_order_locations()
+    # order.set_order_locations()
     order_locations = order.order_locations
 
     for location in order_locations:

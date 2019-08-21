@@ -58,6 +58,7 @@ function run() {
     }).addTo(mymap);
 
     let endpoint = 'https://aunt-flow-mapping.herokuapp.com/api/orders'
+    // let endpoint = 'https://http://127.0.0.1:5000/api/orders'
 
     let loc_response = getResponse(endpoint);
     loc_response.then(addMarkers.bind(null, mymap), failureCallback);
