@@ -4,7 +4,6 @@ import requests
 import zipcodes
 import pycurl
 
-from app.gen.mymap import script
 from config import Config
 
 
@@ -16,61 +15,61 @@ def get_response(shop, endpoint, params=''):
     return response
 
 
-def get_theme_id(shop):
-    theme_response = get_response(shop, "themes.json")
-    all_themes = json.loads(theme_response.content.decode('utf-8')).get('themes')
-    for theme in all_themes:
-        if theme['role'] == "main":
-            theme_id = theme['id']
-            return theme_id
-    return "No theme has the role of main"
+# def get_theme_id(shop):
+#     theme_response = get_response(shop, "themes.json")
+#     all_themes = json.loads(theme_response.content.decode('utf-8')).get('themes')
+#     for theme in all_themes:
+#         if theme['role'] == "main":
+#             theme_id = theme['id']
+#             return theme_id
+#     return "No theme has the role of main"
 
 
-def put_data(shop, endpoint, put_location, data):
-    response = None
-    headers= {"Accept": "text/plain", "Content-Type": "text/plain"}
-    payload = {
-      "asset": {
-        "key": "assets/map.js",
-        "attachment": script
-      }
-    }
+# def put_data(shop, endpoint, put_location, data):
+#     response = None
+#     headers= {"Accept": "text/plain", "Content-Type": "text/plain"}
+#     payload = {
+#       "asset": {
+#         "key": "assets/map.js",
+#         "attachment": script
+#       }
+#     }
 
-    try:
-        response = requests.put("%s%s" % (shop, endpoint), data=script, headers=headers)
+#     try:
+#         response = requests.put("%s%s" % (shop, endpoint), data=script, headers=headers)
 
-        if response.status_code != 200:
-            print(response.text)
-            print(response.status_code)
-            raise Exception('Recieved non 200 response.')
-        return
-    except requests.exceptions.RequestException as e:
-        if response != None:
-            print(response.text)
-        print(e)
-        raise
+#         if response.status_code != 200:
+#             print(response.text)
+#             print(response.status_code)
+#             raise Exception('Recieved non 200 response.')
+#         return
+#     except requests.exceptions.RequestException as e:
+#         if response != None:
+#             print(response.text)
+#         print(e)
+#         raise
 
-def put_data_curl(shop, endpoint, put_location, data):
-    c = pycurl.Curl()
+# def put_data_curl(shop, endpoint, put_location, data):
+#     c = pycurl.Curl()
 
-    url = "%s%s" %(shop, endpoint)
-    print("URL: " + url)
-    c.setopt(pycurl.URL, url)
-    c.setopt(pycurl.HTTPHEADER, ['Content-Type: text/plain', 'Accept: text/plain'])
-    c.setopt(pycurl.CUSTOMREQUEST, "PUT")
-    # data = script
-    c.setopt(pycurl.POSTFIELDS, data)
-    c.setopt(c.UPLOAD, 1)
-    file = open("app/gen/mymap.txt")
-    c.setopt(c.READDATA, file)
+#     url = "%s%s" %(shop, endpoint)
+#     print("URL: " + url)
+#     c.setopt(pycurl.URL, url)
+#     c.setopt(pycurl.HTTPHEADER, ['Content-Type: text/plain', 'Accept: text/plain'])
+#     c.setopt(pycurl.CUSTOMREQUEST, "PUT")
+#     # data = script
+#     c.setopt(pycurl.POSTFIELDS, data)
+#     c.setopt(c.UPLOAD, 1)
+#     file = open("app/gen/mymap.txt")
+#     c.setopt(c.READDATA, file)
 
-    c.perform()
-    print("status code: %s" % c.getinfo(pycurl.HTTP_CODE))
-    c.close()
+#     c.perform()
+#     print("status code: %s" % c.getinfo(pycurl.HTTP_CODE))
+#     c.close()
 
-    file.close()
+#     file.close()
 
-    return
+#     return
 
 class Orders:
     shop = Config.SHOPIFY_CONFIG['HOST']
@@ -184,17 +183,17 @@ class Orders:
         return
 
 
-    def put_data(self):
-        theme_id = get_theme_id(self.shop_url)
-        print("THEME ID =%s" % theme_id)
-        endpoint = "themes/%s/assets.json" % theme_id
-        file_location = "assets/map.js"
-        print("SCRIPTE IS: " + script)
-        # put_response = put_data(self.shop_url, endpoint, file_location, script)
-        put_response = put_data_curl(self.shop_url, endpoint, file_location, script)
-        print(put_response.status_code)
-        print(put_response.headers)
-        return json.loads(put_response.decode('utf-8'))
+    # def put_data(self):
+    #     theme_id = get_theme_id(self.shop_url)
+    #     print("THEME ID =%s" % theme_id)
+    #     endpoint = "themes/%s/assets.json" % theme_id
+    #     file_location = "assets/map.js"
+    #     print("SCRIPTE IS: " + script)
+    #     # put_response = put_data(self.shop_url, endpoint, file_location, script)
+    #     put_response = put_data_curl(self.shop_url, endpoint, file_location, script)
+    #     print(put_response.status_code)
+    #     print(put_response.headers)
+    #     return json.loads(put_response.decode('utf-8'))
 
 
     def get_coordinates(self):
