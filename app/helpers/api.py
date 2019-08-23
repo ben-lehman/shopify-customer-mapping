@@ -82,12 +82,14 @@ class Orders:
         self.order_locations = []
         self.shop_url = "https://%s:%s@%s/admin/api/%s/" % (mykey, mysec, myshop, myapi)
 
-    def set_order_count(self):
-        order_endpoint = "orders/count.json?status=any"
+    def set_order_count(self, count=0):
+        if(count == 0):
+            order_endpoint = "orders/count.json?status=any"
 
-        order_count_response = get_response(self.shop_url, order_endpoint)
-        order_count = json.loads(order_count_response.content.decode('utf-8')).get('count')
-
+            order_count_response = get_response(self.shop_url, order_endpoint)
+            order_count = json.loads(order_count_response.content.decode('utf-8')).get('count')
+        else:
+            order_count = count
         print("Order count is %s" %order_count)
         self.count = order_count
         return

@@ -60,6 +60,25 @@ def update():
     flash('Locations have been updated')
     return render_template('orders/update.html')
 
+@bp.route('/updatesmall', methods=('GET',))
+def updatesmall():
+    order = Orders()
+    order.set_order_count(count=1000)
+    order_count = order.count
+
+    order.set_all_order_locations()
+    order_locations = order.order_locations
+
+    for location in order_locations:
+        zcode = location['zip']
+        customer = get_or_increase_zipcode(zcode)
+        if customer is not None:
+            models.db.session.add(customer)
+            models.db.session.commit()
+
+    flash('Locations have been updated')
+    return 'Updated'
+
 
 @bp.route('/clear', methods=('Get',))
 def clear():
